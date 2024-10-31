@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-
+import Suggestions from './suggestions'
 export default function SearchAutoComplete(){
     const [loading, setLoading] = useState(false)
     const [users, setUsers] = useState([])
@@ -8,7 +8,7 @@ export default function SearchAutoComplete(){
     const [showDropDown, setShowDropDown] = useState(false)
     const [filteredUsers, setFilteredUsers] = useState([])
 
-    function handleOnChange(event) {
+    function handleChange(event) {
         const query = event.target.value.toLowerCase()
         setSearchParam(query)
         if(query .length > 1) {
@@ -20,6 +20,12 @@ export default function SearchAutoComplete(){
         } else {
             setShowDropDown(false)
         }
+    }
+
+    function handleClick(event) {
+     setShowDropDown(false)
+     setSearchParam(event.target.innerText)
+     setFilteredUsers([])
     }
     async function fetchUsers() {
         try{
@@ -43,12 +49,19 @@ export default function SearchAutoComplete(){
     console.log(users, filteredUsers)
     return(
         <div className="search-autocomplete-container">
-          <input
-           value={searchParam}
-           type="text"
-           placeholder="Search Users here..."
-           onChange={handleOnChange}
+            {
+              loading ? <h1>LOADING DATA ...</h1> : 
+              <input
+               value={searchParam}
+               type="text"
+               placeholder="Search Users here..."
+               onChange={handleChange}
            />
+           }
+          
+           {
+            showDropDown && <Suggestions handleClick={handleClick} data={filteredUsers} />
+           }
         </div>
     )
 }
